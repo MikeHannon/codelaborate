@@ -1,6 +1,6 @@
 
-//friend factory
-friends_app.factory('FriendFactory', function($http) {
+
+friends_app.factory('MainFactory', function($http) {
   var factory = {};
   var friends = [];
   factory.getFriends = function(callback) {
@@ -31,6 +31,24 @@ friends_app.factory('FriendFactory', function($http) {
   return factory;
 });
 
+friends_app.controller('MainController',function($scope,MainFactory){
+    $scope.working_index = 0;
+    $scope.user_id = {name:"guest",
+    temp_id:"0",
+    functions:[{name:"Hello World"}],
+    //this_index = 0
+
+    }
+
+    $scope.add_Function = function(myData) {
+      $scope.new_function['data']=[];
+      $scope.new_function['owner']=$scope.user_id.name;
+      $scope.user_id.functions.push($scope.new_function);
+      $scope.working_index ++;
+    //  console.log();
+      $scope.new_function = {};
+  }
+});
 //friend controller
 
 friends_app.controller('FriendsController', function($scope, FriendFactory) {

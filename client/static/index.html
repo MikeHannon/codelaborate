@@ -1,40 +1,119 @@
 <!doctype html>
 <html ng-app="friends_app">
 <head>
-  <title>Full Mean Demo="support tag from-rainbow"></title>
+  <style>
+    body{
+      padding:15px;
+    }
+    textarea {
+      margin-top:5px;
+      width:757px;
+    }
+    #new_function{
+      background-color:grey;
+      padding:5px;
+      margin: 2px;
+    }
+    fieldset{padding:1px;
+    width:933px;}
+  </style>
+  <title>Collaborative Coding</title>
   <!-- require angular -->
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
   <!-- adds routing -->
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
   <!--   contains angular code -->
+
+  <script src = 'js/lib/codemirror.js'></script>
+  <link rel="stylesheet" href="js/lib/codemirror.css">
+  <link rel="stylesheet" href="css/theme/3024-day.css">
+  <link rel="stylesheet" href="css/theme/3024-night.css">
+  <link rel="stylesheet" href="css/theme/ambiance-mobile.css">
+  <link rel="stylesheet" href="css/theme/base16-dark.css">
+  <link rel="stylesheet" href="css/theme/base16-light.css">
+  <link rel="stylesheet" href="css/theme/blackboard.css">
+  <link rel="stylesheet" href="css/theme/cobalt.css">
+  <link rel="stylesheet" href="css/theme/colorforth.css">
+  <link rel="stylesheet" href="css/theme/eclipse.css">
+  <link rel="stylesheet" href="css/theme/elegant.css">
+  <link rel="stylesheet" href="css/theme/erlang-dark.css">
+  <link rel="stylesheet" href="css/theme/lesser-dark.css">
+  <link rel="stylesheet" href="css/theme/liquibyte.css">
+  <link rel="stylesheet" href="css/theme/mbo.css">
+  <link rel="stylesheet" href="css/theme/mdn-like.css">
+  <link rel="stylesheet" href="css/theme/midnight.css">
+  <link rel="stylesheet" href="css/theme/monokai.css">
+  <link rel="stylesheet" href="css/theme/neat.css">
+  <link rel="stylesheet" href="css/theme/neo.css">
+
+
+  <link rel="stylesheet" href="css/theme/night.css">
+  <link rel="stylesheet" href="css/theme/paraiso-light.css">
+  <link rel="stylesheet" href="css/theme/paraiso-dark.css">
+  <link rel="stylesheet" href="css/theme/pastel-on-dark.css">
+  <link rel="stylesheet" href="css/theme/rubyblue.css">
+  <link rel="stylesheet" href="css/theme/solarized.css">
+  <link rel="stylesheet" href="css/theme/the-matrix.css">
+  <link rel="stylesheet" href="css/theme/tomorrow-night-bright.css">
+
+  <link rel="stylesheet" href="css/theme/tomorrow-night-eighties.css">
+  <link rel="stylesheet" href="css/theme/ttcn.css">
+  <link rel="stylesheet" href="css/theme/twilight.css">
+  <link rel="stylesheet" href="css/theme/vibrant-ink.css">
+  <link rel="stylesheet" href="css/theme/xq-dark.css">
+  <link rel="stylesheet" href="css/theme/xq-light.css">
+  <link rel="stylesheet" href="css/theme/zenburn.css">
+
+
+
+  <script src="js/mode/javascript/javascript.js"></script>
+
+
+
   <script src = "js/friend_angular_script.js"></script>
+
   <script src = "js/node_script.js"></script>
   <script src = "js/main_script.js"></script>
+  <script src = "js/login_script.js"></script>
+
+
 </head>
 
 <!-- everything in the body is going to use the friends controller (this gives us access to the friends controller $scope) -->
 <body >
+
   <!-- # controls local views -->
-  <a href = "#/node">Node</a>|<a href = "#/angular">Angular</a>|<a href = "#/express">Express</a>|<a href = "#/socket">Socket</a>
-<div ng-controller="FriendsController">  <h1>Friends</h1>
-  <input type="text" ng-model="filter_name" placeholder="filter">
-  {{filter_name}}
+ <a href = "#/login">Login</a>  &nbsp; &nbsp; |  &nbsp; &nbsp;  <a href = "#/node">CodeStuff</a>   &nbsp; &nbsp; |  &nbsp; &nbsp;  <a href = "#/node">Bugs</a><!-- |<a href = "#/angular">Angular</a>|<a href = "#/express">Express</a>|<a href = "#/socket">Socket</a> -->
+ <div ng-controller="MainController">
+    <h1>Hello {{user_id.name}}</h1>
+<!--    <input type="text" ng-model="filter_name" placeholder="filter">
+{{filter_name}}
   <ul>
-    <!-- here is where we are going to display friends -->
-    <li ng-repeat="friend in friends | filter: filter_name">
-      {{friend.name}}, {{friend.age}}  <button ng-click="removefriend(friend)">delete</button>
-    </li>
-  </ul>
-  <h1>Add a Friend</h1>
-  <!-- objects and properties nothing scary -->
-  <input type="text" ng-model="new_friend.name" placeholder="name">
-  <input type="text" ng-model="new_friend.age" placeholder="age">
-<!--   addfriend() is a method we are going to make in the angular controller -->
-  <input type="submit" ng-click="addfriend()">
+ here is where we are going to display friends
+     <li ng-repeat="function in functions | filter: filter_name">
+     <span ng-bind = "function.name"></span>  <span ng-bind = "function.description"></span><span ng-bind = "function.inputs"></span><span ng-bind = "function.return"></span>  <button ng-click="load_function(function)">Load</button>
+     </li>
+  </ul> -->
+  <fieldset><legend>Start a New Function</legend>
+<div id = "new_function">
+
+   <!-- objects and properties nothing scary -->
+   <input type="text" ng-model="new_function.name" placeholder="function name"><br>
+   <input type="text" ng-model="new_function.variables" placeholder="inputs">
+   <input type="text" ng-model="new_function.return" placeholder="return">
+   <input type="text" ng-model="new_function.stack" placeholder="stack/language"><br>
+   <textarea ng-model="new_function.description" placeholder="description"></textarea><br>
+  <!--  addfriend() is a method we are going to make in the angular controller -->
+   <input type="submit" ng-click="add_Function()" value = "New Function">
+
 </div>
+</fieldset>
+
 
 <div ng-view="">
+
+</div>
 </div>
 </body>
 </html>

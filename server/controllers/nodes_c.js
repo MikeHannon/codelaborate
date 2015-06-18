@@ -44,9 +44,17 @@ module.exports = (function() {
     },
 
     say_hello:function(req,res){
-      console.log("hello world");
+    //  console.log("hello world");
       res.json({"success":"true"});
-    }
+      //consol.log(res);
+    },
+
+    add_node_function:function(req,res){
+      //functionality coming
+    //  console.log("hello world");
+      res.json({"success":"false"});
+    },
+
 
     }
 })();

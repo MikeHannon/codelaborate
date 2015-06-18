@@ -1,3 +1,396 @@
+<style>
+*{
+  border:0;
+  margin:0;
+
+}
+.users button{
+  border-radius:5px;
+  background-color:white;
+  border: 1px solid grey;
+}
+ #warning{
+   padding-left:10px;
+   color:red;
+   margin:0;
+ }
+  #wrapper{
+    border:1px solid black;
+    max-width: 800px;
+    display: table-cell;
+    vertical-align:top;
+    x-overflow: scroll;
+
+  }
+  #script_source{
+    border:1px solid grey;
+  }
+  #console_wrapper{
+    border:1px solid black;
+    max-width:300px;
+    display: table-cell;
+    vertical-align:top;
+    x-overflow: scroll;
+  }
+  #console_wrapper h3{
+    min-width:200px;
+    text-align:center;
+  }
+  #console_log{
+    max-width:300px;
+    word-wrap: break-word;
+  }
+  #evaluated{
+    border:1px solid black;
+    width: 933px;
+    max-width: 1100px;
+    min-height:20px;
+  }
+  #chat_wrapper{
+    border:1px solid black;
+    min-width:200px;
+    max-width:300px;
+    display: table-cell;
+    vertical-align:top;
+    x-overflow: scroll;
+  }
+  #chat_wrapper button{
+    margin-left:5px;
+    margin-right:5px;
+  }
+  #function{
+    display:inline-block;
+  }
+  h5{
+    display:inline-block;}
+
+
+</style>
+<script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+
+
+
+<script>
+
+function load_function(){}
+function run_javascript(myValue){
+
+
+// modified from http://stackoverflow.com/questions/20256760/javascript-console-log-to-html
+
+    var logger = document.getElementById('console_log');
+    logger.innerHTML = "";
+
+
+       console.log = function (message) {
+            if (typeof message == 'object') {
+                logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />';
+
+            } else {
+                logger.innerHTML += message + '<br />';
+            }
+          }
+
+    old2 = window.onerror;
+
+    window.onerror = function(msg, url, linenumber) {
+    logger.innerHTML += ('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+(linenumber));
+    }
+}
+
+function load_function(current_function,editor){
+
+  if (current_function['data']){
+  var codes = current_function.data;
+  for (var i = 0; i<codes.length; i ++){
+    editor.replaceRange(codes[i] + ('\n'),
+      {line: i, ch:0},
+      {line: i, ch:codes[i].length});
+      editor.indentLine(i);
+    //  console.log("hello",i);
+    //  console.log(codes[code].line.length);
+    }
+  //  socket.emit("delete_message",codes);
+  }
+
+};
+
+
+$(document).ready(function(){
+
+  //$('[ng-controller="MainController"]').scope().user_id.functions[0] = "donut"
+  //console.log(current_function);
+  old = console.log;
+  old2 =window.onerror;
+  //console.log(document.getElementById('hi'));
+  editor = CodeMirror.fromTextArea(document.getElementById('script_source'), {
+    lineNumbers: true,
+    extraKeys:{
+       "Enter":
+       function(e){
+         console.log = old;
+         window.onerror = old2;
+         var current_cursor = (e.getCursor());
+         console.log(current_cursor);
+         var currentUser = current_name;
+         console.log(currentUser);
+         socket.emit('chat message', {"line":e.getLine(e.getCursor().line), "index":e.getCursor().line, "cursor":e.getCursor().ch, "name":current_name});
+         //normal ajax here rather than angular <-- only way I could get CM to bind w Sockets
+         $.get('/build_node',function(data){
+           console.log(data);
+         });
+       },
+      }
+  });
+  var current_name = "guest";
+  if ($('[ng-controller="MainController"]').scope().user_id.functions[0]!=="undefined")
+  {var current_function = $('[ng-controller="MainController"]').scope().user_id.functions[0];
+  load_function(current_function, editor);
+  //console.log()
+  current_name = $('[ng-controller="MainController"]').scope().user_id.name;
+  }
+
+
+  $('#reporter').click(function(){
+    var myValue = editor.getValue();
+  //  var old = console.log;
+    run_javascript(myValue);
+    //console.log = old;
+
+    //console.log(document.getElementById('hi').value);
+  //console.log(editor.getValue());
+  var myHTML = eval(editor.getValue());
+  $('#evaluated').html(myHTML);
+  });
+  $('#reporter').mouseout(function(){
+    console.log = old;
+    window.onerror = old2;
+  });
+if (typeof(socket) == 'undefined'){
+  socket = io.connect();
+}
+socket.on('some event', function(data){
+  console.log("just this room ", data);
+});
+  //socket.on("connection")
+//  console.log(current_name);
+socket.on('private_message', function(data){
+
+console.log(data);
+
+  $('#join_up').html("<p> Join " +  data.name + "</p><br><button id = 'accept'>Accept</button><button id = 'decline'> decline </button>");
+
+  //console.log("You've been invited to join room=: " + data);
+});
+
+  socket.emit("update_nickname",current_name);
+
+
+  socket.on('new_user', function(users){
+    var myHTML = "";
+    console.log(users);
+    for (user in users){
+      myHTML += "<p class = 'users' id =" + users[user].socket +" buttonMode = 'true'>";
+      myHTML += "<button>" + users[user].name + "</button>";
+      myHTML += "</p>";
+    }
+    $('#chat_members').html(myHTML);
+    $('.users').on("click", function(){
+      var target_id = this.id;
+      socket.emit("want_to_join", target_id);
+      //console.log(this.id);
+      });
+  })
+
+
+  socket.on('function_update2', function(codes){
+    var myCursor = editor.getCursor();
+    editor.setValue(" ");
+    //var myCursor = {};
+    //if(editor.getCursor() !== null){
+    var myString = "";
+    for (var code in codes){
+      editor.replaceRange(codes[code].line + ('\n'),
+        {line: codes[code].index, ch:0},
+        {line:codes[code].index, ch:codes[code].line.length});
+      //  editor.indentLine(codes[code].index);
+      //  console.log(codes[code].line.length);
+      }
+
+      console.log(myCursor);
+      //if (myCursor.line){
+      //  console.log("ehllo");
+      editor.setCursor(myCursor);
+      //}
+      //else {};
+  });
+
+
+
+
+  socket.on('function_update', function(codes){
+    var myCursor = editor.getCursor();
+    editor.setValue("");
+    //var myCursor = {};
+    //if(editor.getCursor() !== null){
+    var myString = "";
+    for (var code in codes){
+      editor.replaceRange(codes[code].line + ('\n'),
+        {line: codes[code].index, ch:0},
+        {line:codes[code].index, ch:codes[code].line.length});
+        editor.indentLine(codes[code].index);
+      //  console.log(codes[code].line.length);
+      }
+
+      console.log(myCursor);
+      if (myCursor.line){
+      //  console.log("ehllo");
+        editor.setCursor(myCursor);
+      }
+      else {};
+
+    });
+    //sets the current cursor to the next line...
+    socket.on('linupdate', function(current_cursor){
+      editor.setCursor({line: (current_cursor+1), ch: 0});
+
+    });
+
+
+
+$('#wrapper').hover(function(){add_delete_handler();},function(){remove_delete_handler();});
+
+//editor.update(function(){console.log("hello")});
+
+});
+
+function add_delete_handler(){
+  document.addEventListener("keyup", checkDelete);
+}
+
+function remove_delete_handler(){
+  document.removeEventListener("keyup", checkDelete);
+
+}
+
+function checkDelete(e){
+ var myArray = [];
+ console.log(e.keyCode);
+  if (e.keyCode == 8 || e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40){
+    console.dir(socket);
+    var myCounter = editor.lineCount();
+    while (editor.getLine(myCounter) == undefined && myCounter > 0){
+      myCounter --;
+    }
+   if( myCounter == 0){ if (editor.getLine(i) !== undefined){
+     myArray[i]={"index":i,"line":editor.getLine(i)};
+     }
+     else {myArray[i]={"index":i,"line": ""};
+     }}
+  else{
+    for (var i = 0; i < myCounter; i ++){
+
+     if (editor.getLine(i) !== undefined){
+      myArray[i]={"index":i,"line":editor.getLine(i)};
+      }
+      else {myArray[i]={"index":i,"line": ""};
+      }
+    }
+    socket.emit("delete_message",myArray);
+  //  console.log(myArray);
+    }
+  }
+  //else if (e.keyCode !== 13){
+  //console.log(editor.getLine(editor.getCursor));
+
+//  }
+}
+ </script>
+
+ <script>
+
+   var input = document.getElementById("theme_select");
+   function selectTheme() {
+
+     var theme = input.options[input.selectedIndex].innerHTML;
+     editor.setOption("theme", theme);
+   }
+
+ </script>
+
+
+
+
 <div ng-controller="nodeController">
-<h1>Hello World</h1>
-<a href = "#"><span ng-click = "say_hell()">Hello World<span></a>
+<h1 id = "function" name = "{{user_id.name}}">{{user_id.functions[working_index].name}}</h1>
+<h5 id = "current"> LOADED FUNCTION </h5>
+<div>
+  <select ng-model = "working_index">
+        <option value = "">-- Load a Function --</option>
+        <option ng-repeat="function in user_id.functions" value = "{{$index}}">{{function.name}}</option></select><label> <h5>CHANGE TO FUNCTION </h5></label>
+</div>
+<!--<option ng-repeat="function in user_id.functions" value = "{{function}}">{{function.name}}</option>-->
+<!-- <a href = "#"><span ng-click = "say_hell()">Hello World<span></a> -->
+<div id = "wrapper">
+<textarea id = "script_source"></textarea>
+<button id = "reporter">Report Text To Console</button>
+<button id ="save" ng-click = "save_function()"><b>SAVE LOADED FUNCTION</b></button>
+<label>Theme:</label><select onchange="selectTheme()" id="theme_select">
+    <option selected="">default</option>
+    <option>3024-day</option>
+    <option>3024-night</option>
+    <option>ambiance</option>
+    <option>base16-dark</option>
+    <option>base16-light</option>
+    <option>blackboard</option>
+    <option>cobalt</option>
+    <option>colorforth</option>
+    <option>eclipse</option>
+    <option>elegant</option>
+    <option>erlang-dark</option>
+    <option>lesser-dark</option>
+    <option>liquibyte</option>
+    <option>mbo</option>
+    <option>mdn-like</option>
+    <option>midnight</option>
+    <option>monokai</option>
+    <option>neat</option>
+    <option>neo</option>
+    <option>night</option>
+    <option>paraiso-dark</option>
+    <option>paraiso-light</option>
+    <option>pastel-on-dark</option>
+    <option>rubyblue</option>
+    <option>solarized dark</option>
+    <option>solarized light</option>
+    <option>the-matrix</option>
+    <option>tomorrow-night-bright</option>
+    <option>tomorrow-night-eighties</option>
+    <option>ttcn</option>
+    <option>twilight</option>
+    <option>vibrant-ink</option>
+    <option>xq-dark</option>
+    <option>xq-light</option>
+    <option>zenburn</option>
+</select>
+<p id = "warning">*Save will overwrite your currently loaded function!</p>
+</div>
+<div id = "console_wrapper">
+  <h3><u>Console Log</u></h3>
+  <p id ="console_log"></p>
+</div>
+<div id = "chat_wrapper">
+  <button>All</button>|<button>Team</button>
+  <div id ="join_up"></div>
+  <div id = "chat_members">
+
+  </div>
+
+
+</div>
+
+<h3><u>HTML of Result</u></h3>
+<div id = "evaluated">
+</div>
+
+</div>
