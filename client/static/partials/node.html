@@ -144,9 +144,7 @@ $(document).ready(function(){
          console.log = old;
          window.onerror = old2;
          var current_cursor = (e.getCursor());
-         console.log(current_cursor);
          var currentUser = current_name;
-         console.log(currentUser);
          socket.emit('chat message', {"line":e.getLine(e.getCursor().line), "index":e.getCursor().line, "cursor":e.getCursor().ch, "name":current_name});
          //normal ajax here rather than angular <-- only way I could get CM to bind w Sockets
          $.get('/build_node',function(data){
@@ -155,6 +153,8 @@ $(document).ready(function(){
        },
       }
   });
+
+  // ON LOAD DATA!
   var current_name = "guest";
   if ($('[ng-controller="MainController"]').scope().user_id.functions[0]!=="undefined")
   {var current_function = $('[ng-controller="MainController"]').scope().user_id.functions[0];
@@ -250,12 +250,15 @@ socket.on('private_message', function(data){
     //var myCursor = {};
     //if(editor.getCursor() !== null){
     var myString = "";
+    $('[ng-controller="MainController"]').scope().functional_data = [];
     for (var code in codes){
       editor.replaceRange(codes[code].line + ('\n'),
         {line: codes[code].index, ch:0},
         {line:codes[code].index, ch:codes[code].line.length});
         editor.indentLine(codes[code].index);
-      //  console.log(codes[code].line.length);
+
+        $('[ng-controller="MainController"]').scope().functional_data.push(codes[code].line);
+        console.log($('[ng-controller="MainController"]').scope());
       }
 
       console.log(myCursor);

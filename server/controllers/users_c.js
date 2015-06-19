@@ -49,6 +49,7 @@ module.exports = (function() {
 //adding.
   add: function(req, res){
     //  if (req.body['username']){
+
     User.findOne({"username":req.body.username},function (err,user){
       var my_user_id;
       if (!user) {
@@ -97,12 +98,44 @@ module.exports = (function() {
     });
 
   },
-  update:function(req,res){
+//specifically generates a new funcction
+  function_new:function(req,res){
     if (req.body.name !== 'guest'){
+      var parent;
+      User.findOne({"username":req.body.name},function(res, user){
+        //console.log("hello", res);
+        console.log("HELLLLLOOOOO",user)
+        parent = user;
+        var last = req.body.functions.length - 1;
+        parent.functions.push(req.body.functions[last]);
+        console.log(parent);
+        parent.save(function(err) {
+          console.log(err);
+        });
 
-    console.log("At the update function",req.body);
-  }
+      });
+
+    //  console.log(req.body.functions[last]);
+
+
+      //parent.functions.push(req.body.functions[last]);
+      //parent.functions.push(req.body.functions[last]);
+      // parent.save(function(err) {
+      //   if(err) {
+      //     res.json({"login":"false"});
+      //   } else { // else console.log that we did well and then redirect to the root route
+      //     res.json({"login":"true"});
+      //   }
+      // });
+    //  console.log(length);
+
+      //functions
+      //parent.
+  //  console.log("At the update function",req.body);
+    }
   },
+
+
 //upserting (edit by id)
     upsert: function(req,res){
       var upsertData  = req.body;

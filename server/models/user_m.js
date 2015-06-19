@@ -66,7 +66,7 @@ var lengthValidator2 = function(val) {
 //   //temp_id:String
 // });
 FunctionSchema.path('name').required(true, 'name');
-FunctionSchema.path('data').required(true, 'name');
+//FunctionSchema.path('data').required(true, 'name');
 FunctionSchema.path('description').required(true, 'name');
 FunctionSchema.path('return').required(true, 'name');
 FunctionSchema.path('variables').required(true, 'name');

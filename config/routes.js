@@ -28,7 +28,7 @@ module.exports = function(app) {
     users.show_one_login(req,res);
   });
 
-  app.post('/user/update', function(req,res){
-    users.update(req,res);
+  app.post('/user/function/new', function(req,res){
+    users.function_new(req,res);
   })
 }
