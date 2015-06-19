@@ -97,6 +97,12 @@ module.exports = (function() {
     });
 
   },
+  update:function(req,res){
+    if (req.body.name !== 'guest'){
+
+    console.log("At the update function",req.body);
+  }
+  },
 //upserting (edit by id)
     upsert: function(req,res){
       var upsertData  = req.body;

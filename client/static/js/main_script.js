@@ -28,6 +28,11 @@ friends_app.factory('MainFactory', function($http) {
 
       });
   }
+
+  factory.updateUser = function (info, callback){
+    $http.post('/user/update', info).success(function(data){});
+    console.log(info);
+  }
   return factory;
 });
 
@@ -44,6 +49,9 @@ friends_app.controller('MainController',function($scope,MainFactory){
       $scope.new_function['data']=[];
       $scope.new_function['owner']=$scope.user_id.name;
       $scope.user_id.functions.push($scope.new_function);
+      MainFactory.updateUser($scope.user_id, function(){
+
+      });
       $scope.working_index ++;
     //  console.log();
       $scope.new_function = {};
