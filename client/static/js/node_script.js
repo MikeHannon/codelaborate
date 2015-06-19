@@ -42,6 +42,11 @@ friends_app.controller('nodeController', function($scope, nodeFactory) {
   $scope.save_function = function(){
     event.preventDefault();
     console.log($scope.user_id + "TOTALLY");
-  
   }
+
+  $scope.load_function = function(){
+    event.preventDefault();
+    console.log($scope.user_id + "TOTALLY");
+  }
+
 });

@@ -78,7 +78,24 @@ function join_room(data){
   $('#join_up').html("");
 }
 
-function load_function(){}
+function load_function2(){
+  editor.setValue("");
+  var myvalue = $('#current_function').val();
+  var current_function = $('[ng-controller="MainController"]').scope().user_id.functions[myvalue];
+  console.log(current_function);
+  var codes = current_function.data;
+  for (var i = 0; i<codes.length; i ++){
+    editor.replaceRange(codes[i] + ('\n'),
+      {line: i, ch:0},
+      {line: i, ch:codes[i].length});
+      editor.indentLine(i);
+    //  console.log("hello",i);
+    //  console.log(codes[code].line.length);
+    }
+  //  socket.emit("delete_message",codes);
+
+
+}
 
 
 function decline_invitation(){
@@ -344,7 +361,7 @@ function checkDelete(e){
 <h1 id = "function" name = "{{user_id.name}}">{{user_id.functions[working_index].name}}</h1>
 <h5 id = "current"> LOADED FUNCTION </h5>
 <div>
-  <select ng-model = "working_index">
+  <select id="current_function" ng-model = "working_index" ng-change = "load_function()" onchange = "load_function2()">
         <option value = "">-- Load a Function --</option>
         <option ng-repeat="function in user_id.functions" value = "{{$index}}">{{function.name}}</option></select><label> <h5>CHANGE TO FUNCTION </h5></label>
 </div>
