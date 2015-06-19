@@ -82,9 +82,9 @@ io.sockets.on('connection', function (socket) {
   if (!socket['nickname']){
   socket['nickname'] = "guest";
   var myRoom = "room"+activeRoomIndex;
-  socket.join("Whatever");
+  socket.join(myRoom);
   //console.log(socket);
-  socket_users.push({"socket":socket.id, "name":socket.nickname, "current_room":"Whatever"});
+  socket_users.push({"socket":socket.id, "name":socket.nickname, "current_room":myRoom});
   }
   var myIndex;
   for (var i = 0; i < socket_users.length; i ++){
@@ -143,7 +143,7 @@ io.sockets.on('connection', function (socket) {
         break;
       }
     }
-    console.log(socket.rooms);
+    //console.log(socket.rooms);
 
     //codeArray[activeRoomIndex].data
 
@@ -159,24 +159,40 @@ io.sockets.on('connection', function (socket) {
     }
 
     codeArray[activeRoomIndex].data[(code.index)] = code;
-
+    //console.log(codeArray[activeRoomIndex]);
     codeArray[activeRoomIndex].data.splice((code.index+1),0,{"line":after_cursor, "index":code.index+1});
-    for (var i = code.index+2; i < codeArray.length; i ++){
-      codeArray[activeRoomIndex].data[i].index ++;
-    }    //codeArray[(code.index+1)] = {};
+    // for (var i = code.index+2; i < codeArray.length; i ++){
+    //
+    //   console.log("????");
+    //   //codeArray[activeRoomIndex].data[i].index ++;
+    // }    //codeArray[(code.index+1)] = {};
     //var room_id = "room" +activeRoomIndex;
     io.to(socket_users[myIndex].socket).emit('some event',"hello");
     io.to(socket_users[myIndex].current_room).emit('some event', 'goodbye');
-    io.to(socket_users[myIndex].socket).emit('some event',"hello whee");
+
     // for (var i = 0; i < socket_users[roomIndex].sockets_in_room.length; i ++){
     //   io.to(socket_users[roomIndex].sockets_in_room[i]).emit('some event',"hello");
     // }
-
-    io.emit('function_update', codeArray[activeRoomIndex].data);
-    socket.emit('linupdate',code.index);
+    io.to(socket_users[myIndex].current_room).emit('function_update', codeArray[activeRoomIndex].data);
+    io.to(socket_users[myIndex].current_room).emit('linupdate',code.index);
+    // io.emit('function_update', codeArray[activeRoomIndex].data);
+    // socket.emit('linupdate',code.index);
 
   });
+  socket.on("change_rooms", function(data){
+    for (var i = 0; i < socket_users.length; i ++){
+      if (socket_users[i].socket == socket.id){
+        myIndex = i;
+        break;
+      }
+    }
+    console.log(data.new_room);
+    activeRoomIndex = data.new_room.replace("room", "");
+    socket_users[myIndex].current_room = data.new_room;
+    socket.join(data.new_room);
 
+
+  });
 
    socket.on("delete_message",function(myArray){
      for (var i = 0; i < socket_users.length; i ++){
@@ -187,8 +203,8 @@ io.sockets.on('connection', function (socket) {
      }
      codeArray[activeRoomIndex].data = [];
      codeArray[activeRoomIndex].data = myArray;
-
-       io.emit('function_update2', codeArray[activeRoomIndex].data);
+     io.to(socket_users[myIndex].current_room).emit('function_update2', codeArray[activeRoomIndex].data);
+      // io.emit('function_update2', codeArray[activeRoomIndex].data);
    });
 
    socket.on("want_to_join", function(data){
@@ -198,8 +214,9 @@ io.sockets.on('connection', function (socket) {
          break;
        }
      }
-     console.log(data);
-     console.log(socket_users[myIndex].socket);
+     //activeRoomIndex =
+    // console.log(data
+    // console.log(socket_users[myIndex].socket);
      io.to(data).emit('private_message',socket_users[myIndex]);
    });
 

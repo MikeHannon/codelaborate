@@ -72,7 +72,20 @@
 
 <script>
 
+function join_room(data){
+  console.log("hello");
+  socket.emit("change_rooms",{"new_room":data});
+  $('#join_up').html("");
+}
+
 function load_function(){}
+
+
+function decline_invitation(){
+  $('#join_up').html("");
+  console.log("GRRRR");
+
+}
 function run_javascript(myValue){
 
 
@@ -174,11 +187,14 @@ socket.on('some event', function(data){
 });
   //socket.on("connection")
 //  console.log(current_name);
+
+
 socket.on('private_message', function(data){
+  var these_data = data.current_room;
+  console.log(typeof(these_data));
 
-console.log(data);
 
-  $('#join_up').html("<p> Join " +  data.name + "</p><br><button id = 'accept'>Accept</button><button id = 'decline'> decline </button>");
+  $('#join_up').html("<p> Join " +  data.name + '</p><br><button id = "accept" onClick = "join_room(\''+these_data+'\')">Accept</button><button id = "decline" onClick = "decline_invitation()"> decline </button>');
 
   //console.log("You've been invited to join room=: " + data);
 });
