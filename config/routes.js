@@ -23,6 +23,11 @@ module.exports = function(app) {
     users.add(req,res);
   });
 
+  app.get('/users/:id',function(req,res){
+    console.log(req.params);
+    users.show(req,res);
+  });
+
   app.post('/login_user', function(req,res){
     console.log(req.body);
     users.show_one_login(req,res);
@@ -30,5 +35,9 @@ module.exports = function(app) {
 
   app.post('/user/function/new', function(req,res){
     users.function_new(req,res);
-  })
+  });
+  app.put('/user/function/:id', function(req,res){
+    users.function_upsert(req,res);
+  });
+
 }

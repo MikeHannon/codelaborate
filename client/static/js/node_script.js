@@ -39,14 +39,11 @@ friends_app.factory('nodeFactory', function($http) {
 friends_app.controller('nodeController', function($scope, nodeFactory) {
 
 // rest of the controller code
-  $scope.save_function = function(){
-    event.preventDefault();
-    console.log($scope.user_id + "TOTALLY");
-  }
+
 
   $scope.load_function = function(){
     event.preventDefault();
-    console.log($scope.user_id + "TOTALLY");
+  //  console.log($scope.user_id + "TOTALLY");
   }
 
 });

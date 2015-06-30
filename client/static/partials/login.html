@@ -1,24 +1,61 @@
-<div ng-controller="loginController">
-<fieldset>
-  <legend>Register</legend>
-  <input ng-model = "registration.username" type ="text" placeholder = "username">
-  <input ng-model = "registration.first_name" type ="text" placeholder = "firstname">
-  <input ng-model = "registration.last_name" type ="text" placeholder = "lastname">
-  <input ng-model = "registration.password" type ="password" placeholder = "password">
-  <input ng-model = "registration.repeatedpwd" type ="password" placeholder = "repeat pwd">
-  <input ng-model = "registration.email" type ="text" placeholder = "email">
+<style>  *{
+    border:0;
+    margin:0;
+    white-space:collapse;
 
-  <button ng-click = "say_hello(registration)">Click Me</button>
+  }
 
-</fieldset>
+  input{
+    background-color : white;
+    color: black;
+    font-size: 1.1em;
+    border-radius: 6px;
+    margin: 4px;
+  }
 
-<fieldset>
-  <legend>Login</legend>
+  button{
+    background-color : white;
+    color: black;
+    font-size: 1.1em;
+    border-radius: 6px;
+    margin: 4px;
+
+  }
+  #main_login div{
+    margin:15px;
+    display:inline-block;
+    vertical-align: top;
+  }
+  </style>
+  <script>
+  $(document).ready(function(){
+    $('#main_login').css("padding-left",0.5*$(window).width() - 250);
+  });
+  </script>
+
+<div id ="main_login" ng-controller="loginController">
+
   <div>
-    <input ng-model = "login.name" type ="text" placeholder = "username">
-    <input ng-model = "login.password" type ="password" placeholder = "password">
-    <button ng-click = "logmein(login)">Click Me</button>
-
+    <input ng-model = "login.name" type ="text" placeholder = "username"><br>
+    <input ng-model = "login.password" type ="password" placeholder = "password"> <br>
+    <button ng-click = "logmein(login)">Login</button>
   </div>
+
+  <div>
+    <input ng-model = "registration.username" type ="text" placeholder = "username"><br>
+    <input ng-model = "registration.first_name" type ="text" placeholder = "firstname"><br>
+    <input ng-model = "registration.last_name" type ="text" placeholder = "lastname"><br>
+    <input ng-model = "registration.password" type ="password" placeholder = "password"><br>
+    <input ng-model = "registration.repeatedpwd" type ="password" placeholder = "repeat pwd"><br>
+    <input ng-model = "registration.email" type ="text" placeholder = "email"><br>
+
+    <button ng-click = "say_hello(registration)">Register</button>
+  </div>
+
+
+
+<fieldset>
+
+
 </fieldset>
 </div>

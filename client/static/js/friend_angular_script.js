@@ -13,8 +13,8 @@ friends_app.config(function ($routeProvider) {
     .when('/express',{
         templateUrl: '/partials/express.html'
     })
-    .when('/socket',{
-        templateUrl: '/partials/socket.html'
+    .when('/bugs',{
+        templateUrl: '/partials/bugs.html'
     })
     .when('/login',{templateUrl:'/partials/login.html'})
     .otherwise({

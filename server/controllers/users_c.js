@@ -26,7 +26,7 @@ module.exports = (function() {
             "functions":user.functions,
             "success":true});
           }
-        else{console.log("LOSER");
+        else{
         res.json({"login":"false"});}
         }
 
@@ -35,14 +35,16 @@ module.exports = (function() {
   //showing (get)
     show: function(req, res) {
 
-      //if bcrypt.compareSync("my password", hash); // true
-      //bcrypt.compareSync("not my password", hash); // false
-      User.find({}, function(err, results) {
+      console.log(req.body, "REQ BODY");
+      console.log(req.body.user_id);
+      User.findOne({"username":req.params.id}, function(err, results) {
         if(err) {
           res.json();
         } else {
-
-          res.json(results);
+          res.json({"user_id":results.temp_id,
+          "name":results.username,
+          "functions":results.functions});
+          //res.json(results);
         }
       })
     },
@@ -54,9 +56,7 @@ module.exports = (function() {
       var my_user_id;
       if (!user) {
         console.log("unique");
-
         var current_date = Date.now();
-
         req.body["date_created"] = current_date;
         req.body["date_updated"] = current_date;
 
@@ -102,37 +102,58 @@ module.exports = (function() {
   function_new:function(req,res){
     if (req.body.name !== 'guest'){
       var parent;
+      var response_type;
       User.findOne({"username":req.body.name},function(res, user){
-        //console.log("hello", res);
-        console.log("HELLLLLOOOOO",user)
         parent = user;
-        var last = req.body.functions.length - 1;
-        parent.functions.push(req.body.functions[last]);
-        console.log(parent);
-        parent.save(function(err) {
-          console.log(err);
+          var last = req.body.functions.length - 1;
+          var myBoolean = false;
+        for (var i = 0; i < parent.functions.length; i ++){
+          if (parent.functions[i].name == req.body.functions[last].name){
+            response_type = "REPEAT!";
+            var myBoolean = true;
+            break;
+          }
+        }
+        if (myBoolean == false){
+          parent.functions.push(req.body.functions[last]);
+          parent.save(function(err,user) {
+            //console.log(err);
+            if (err){
+              response_type = "ERROR";
+            }
+            else {
+              response_type = "SUCCESS";
+            }
         });
+        console.log(parent);
+      }
+
+    });
+      res.json({"success":  response_type});
+    }
+    else{
+    res.json({"guest":"on"});
+    }
+  },
+
+  function_upsert:function(req,res){
+    var parent;
+    User.findOne({"username":req.body.name}, function(err, user){
+      parent = user;
+      parent.functions = req.body.functions;
+      parent.save(function(err,user) {
+        //console.log(err);
+        if (err){
+    //    res.json(err);
+        }
+        else {
+
+        }
 
       });
 
-    //  console.log(req.body.functions[last]);
-
-
-      //parent.functions.push(req.body.functions[last]);
-      //parent.functions.push(req.body.functions[last]);
-      // parent.save(function(err) {
-      //   if(err) {
-      //     res.json({"login":"false"});
-      //   } else { // else console.log that we did well and then redirect to the root route
-      //     res.json({"login":"true"});
-      //   }
-      // });
-    //  console.log(length);
-
-      //functions
-      //parent.
-  //  console.log("At the update function",req.body);
-    }
+      res.json({"success":"true"});
+    });
   },
 
 

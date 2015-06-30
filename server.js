@@ -69,6 +69,7 @@ io.sockets.on('connection', function (socket) {
   var clients = findClientsSocket();
   var myBool = false;
   var activeRoomIndex = 0;
+  socket.emit("mySocket", socket.id);
   for (var i = 0; i < codeArray.length; i ++){
     if (codeArray[i].room == socket.id){
       myBool = true;
@@ -154,8 +155,6 @@ io.sockets.on('connection', function (socket) {
     if (code.line.length > 0){
     code.line += "//";
     code.line += code.name;
-
-
     }
 
     codeArray[activeRoomIndex].data[(code.index)] = code;
@@ -174,7 +173,7 @@ io.sockets.on('connection', function (socket) {
     //   io.to(socket_users[roomIndex].sockets_in_room[i]).emit('some event',"hello");
     // }
     io.to(socket_users[myIndex].current_room).emit('function_update', codeArray[activeRoomIndex].data);
-    io.to(socket_users[myIndex].current_room).emit('linupdate',code.index);
+    //io.to(socket_users[myIndex].current_room).emit('linupdate',code.index);
     // io.emit('function_update', codeArray[activeRoomIndex].data);
     // socket.emit('linupdate',code.index);
 
