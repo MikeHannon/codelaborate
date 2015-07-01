@@ -175,7 +175,7 @@ io.sockets.on('connection', function (socket) {
     io.to(socket_users[myIndex].current_room).emit('function_update', codeArray[activeRoomIndex].data);
     //io.to(socket_users[myIndex].current_room).emit('linupdate',code.index);
     // io.emit('function_update', codeArray[activeRoomIndex].data);
-    // socket.emit('linupdate',code.index);
+     socket.emit('lineupdate',code.index);
 
   });
   socket.on("change_rooms", function(data){

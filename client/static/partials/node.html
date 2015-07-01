@@ -476,7 +476,7 @@ socket.on('private_message', function(data){
 
     });
     //sets the current cursor to the next line...
-    socket.on('linupdate', function(current_cursor){
+    socket.on('lineupdate', function(current_cursor){
       editor.setCursor({line: (current_cursor+1), ch: 0});
     });
 

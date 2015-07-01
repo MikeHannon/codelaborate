@@ -1,8 +1,12 @@
 {
-  "name": "FullMean_Friends",
+  "name": "FullMean_Codelaborate",
   "version": "0.0.1",
   "dependencies": {
-    "express": "~4.2.0",
-    "mongoose-validator": "^1.2.0"
+    "bcrypt": "*",
+    "body-parser": "^1.13.1",
+    "express": "^5.0.0-alpha.1",
+    "mongoose": "^4.0.6",
+    "mongoose-validator": "*",
+    "socket.io": "*"
   }
 }
